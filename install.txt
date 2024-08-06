@@ -1,0 +1,5 @@
+pip install Appium-Python-Client
+pip install mysql-connector-python
+pip install python-dotenv
+pip install selenium
+pip install requests
