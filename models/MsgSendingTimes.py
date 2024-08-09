@@ -1,10 +1,13 @@
 from functions.DBconnet import DBconnect
 from functions.Notification import Notification
+import sys
+
 
 class MsgSendingTimes: 
       def __init__(self):
             self.db = DBconnect()
             self.cursor = self.db.dbconnection()
+            self.notification_fn = Notification()
      
       def close(self):
             self.db.close()  # デストラクタでデータベース接続を閉じる
@@ -52,8 +55,8 @@ class MsgSendingTimes:
             self.db.conn.commit()  # 変更を永続化
             
         except Exception as e:
-              
-            print(f"An error occurred: {e}")
+            self.notification_fn.send_error(e, f"end_idの更新に失敗しました。手動でデータベースの値を更新しもう一度スクリプトを実行してください。device_id: {device_id}")
+            sys.exit()  
         
       def updateEndId(self, device_id):
         try:

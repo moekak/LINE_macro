@@ -1,34 +1,35 @@
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from functions.Notification import Notification
+from functions.GetElments import GetElements
 
 class ShadowBanMsg:
     
     def __init__(self) -> None:
-        self.notification_fn = Notification
-    def sendMessageToAdmin(self,wait):
+        self.notification_fn = Notification()
+        self.get_elements_fn = GetElements()
+    def sendMessageToAdmin(self, wait, driver):
         try:
+
             element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.TextView[@resource-id="jp.naver.line.android:id/name" and @text="0"]')))
             element.click()
             
             # トークボタンをクリックする(トーク画面が開く)
-            talk_btn_element = wait.until(EC.presence_of_element_located((By.XPATH, '(//android.widget.ImageView[@resource-id="jp.naver.line.android:id/user_profile_button_icon"])[1]')))
-            talk_btn_element.click()
-            
-            element_textarea = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.EditText[@content-desc="メッセージを入力"]')))
-            element_textarea.send_keys("シャードーバン確認メッセージ")
-            element = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.ImageView[@content-desc="送信"]')))
-            element.click()
-            # トーク画面を退出する
-            leave_talk_element = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.ImageView[@resource-id="jp.naver.line.android:id/header_up_button"]')))
-            leave_talk_element.click()
-            
+            self.get_elements_fn.click_talk_btn(wait, driver)
 
-            # ホームアイコンをクリックし、ホームに戻る
-            home_btn = wait.until(EC.presence_of_element_located((By.XPATH, '//android.view.View[@content-desc="ホームタブ"]')))
-            home_btn.click()
+            # メッセージを送信する
+            self.get_elements_fn.send_msg(wait, "シャードーバン確認メッセージ", driver)
             
-            element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.TextView[@resource-id="jp.naver.line.android:id/name" and @text="友だち"]')))
-            element.click()
+            # メッセージ送信ボタンを押す
+            self.get_elements_fn.click_send_msg_btn(wait, driver)
+
+            # トーク画面を退出する
+            self.get_elements_fn.click_leave_talk_btn(wait, driver)
+            
+            # ホームアイコンをクリックし、ホームに戻る
+            self.get_elements_fn.click_home_btn(wait, driver)
+            
+            # 友達リストをクリックする
+            self.get_elements_fn.click_friend_list_btn(wait, driver)
         except Exception as e:
-            self.notification_fn(e, "")
+            print(e)

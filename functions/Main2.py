@@ -46,19 +46,17 @@ def main_fn(driver, wait, device_id):
 
             # 送信フラグを取得
             flag = group_msg_model.checkFlag(messages_data)
+
+            # 友達リストをクリックする
+            get_elements_fn.click_friend_list_btn(wait, driver)
             
 
-            element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.TextView[@resource-id="jp.naver.line.android:id/name" and @text="友だち"]')))
-            element.click()
-            
-            # print(now)
-            # print(prevTime)
             if now - prevTime >= timedelta(minutes=1):
-                shadowBan_fn.sendMessageToAdmin(wait)
+                shadowBan_fn.sendMessageToAdmin(wait, driver)
                 prevTime = datetime.now()
                 
 
-            # 新規追加登録がないか監視している(
+            # 新規追加登録がないか監視している
             # 追加があった場合は、新規登録処理を優先で実行している
             reg_msg_fn.sendMessageToNewFriends(wait, driver, device_id, reg_msg_model,message_url,get_elements_fn, hasMsg = True)
             
@@ -79,14 +77,14 @@ def main_fn(driver, wait, device_id):
                     # メッセージを送信開始タイミングでラインに通知する
                     if int(end_id) == 0:
                         notification_fn.send_msg_sendingTime()
-                                  
-                    element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.TextView[@resource-id="jp.naver.line.android:id/name" and @text="友だち"]')))
-                    element.click()
 
+                    # 友達リストを選択する
+                    get_elements_fn.click_friend_list_btn(wait, driver)
                     print(now)
                     print(prevTime)
+
                     if now - prevTime >= timedelta(minutes=30):
-                        shadowBan_fn.sendMessageToAdmin(wait)
+                        shadowBan_fn.sendMessageToAdmin(wait, driver)
                         prevTime = datetime.now()
                     # 新規追加登録がないか監視している(
                     # 追加があった場合は、新規登録処理を優先で実行している
@@ -108,8 +106,7 @@ def main_fn(driver, wait, device_id):
                         msg_time_model.updateEndId(device_id)
                         msg_time_model.updateFlag(device_id)
                         print("end")
-                        element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.ImageView[@resource-id="jp.naver.line.android:id/header_up_button"]')))
-                        element.click()
+                        get_elements_fn.click_leave_talk_btn(wait, driver)
                         notification_fn.send_msg_emdTime(datetime.now().replace(microsecond=0))
                         break
                     
@@ -119,38 +116,32 @@ def main_fn(driver, wait, device_id):
                         element_xpath = f'//android.widget.TextView[@resource-id="jp.naver.line.android:id/name" and @text="{int(end_id) + 1}"]'
                         
                         # 要素が古くなる可能性があるため、再取得する
-                        time.sleep(3)
-                        print("wowow")
+                        time.sleep(1)
                         elements = driver.find_elements(By.XPATH, element_xpath)
                     except StaleElementReferenceException:
                         # 要素が古くなった場合、再取得して再試行する
                         elements = driver.find_elements(By.XPATH, element_xpath)
                     except TimeoutException as e:
-                        notification_fn.send_error(e, f"一斉配信中にエラーが発生しました。名前:{int(end_id) + 1}に一斉送信できていません。")
-                        driver.save_screenshot('screenshot.png')
-                        print("Timeout occurred, trying again...")
-                        print(e)
+                        notification_fn.send_error(e, f"一斉配信中にエラーが発生しました。名前:{int(end_id) + 1}に一斉送信できていません。LINEを再起動して再度メッセージ送信を試みます。")
+                        get_elements_fn.restart_app(driver)
                                         
                     if elements:
                         elements[0].click()
-                        get_elements_fn.sendGroupMsg(wait, message, msg_time_model, device_id, message_url, int(end_id) +1)
+                        get_elements_fn.sendGroupMsg(wait, message, msg_time_model, device_id, message_url, int(end_id) +1, driver)
                     else: 
                         print("scroll")
                         element = get_elements_fn.find_element_with_scroll(driver, By.XPATH, element_xpath)
                         if element:
                             element.click()
-                            get_elements_fn.sendGroupMsg(wait, message, msg_time_model, device_id, message_url, int(end_id) +1)
+                            get_elements_fn.sendGroupMsg(wait, message, msg_time_model, device_id, message_url, int(end_id) +1, driver)
                         else:
                             print("skip!")
                             try:
+                                # データベースend_idの更新をする
                                 msg_time_model.IncreaseEndId(device_id)
-                                back_button = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.ImageView[@resource-id="jp.naver.line.android:id/header_up_button"]')))
-                                back_button.click()
+                                get_elements_fn.click_leave_talk_btn(wait, driver)
                             except TimeoutException as e:
-                                notification_fn.send_error(e, "")
-                                driver.save_screenshot('screenshot.png')
-                                print("Timeout occurred while trying to click back button...")
-                                print(e)
+                                get_elements_fn.restart_app(driver)
                         
                         
             else:

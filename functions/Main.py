@@ -116,7 +116,7 @@ def main_fn(driver, wait, device_id):
                         
                         if elements:
                             elements[0].click()
-                            get_elements_fn.sendGroupMsg(wait,message)
+                            get_elements_fn.sendGroupMsg(wait,message, driver)
                         else: 
                             print("skip!")
                             element  = wait.until(EC.presence_of_element_located((By.XPATH, '//android.widget.ImageView[@resource-id="jp.naver.line.android:id/header_up_button"]')))
