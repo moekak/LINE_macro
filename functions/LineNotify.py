@@ -6,7 +6,7 @@ class LineNotify:
             """
             LINEに通知する
             """
-            line_notify_token = 'O9957yV7FZwmiuW5X15vBdYwrP6o0t9IZCysnpFOB13'  # アクセストークンをここに入力
+            line_notify_token = 'Rw605pwwhCmryrz6aJq6ixyMwpsdIELgzlB18flT3jC'  # アクセストークンをここに入力
             line_notify_api = 'https://notify-api.line.me/api/notify'
             headers = {'Authorization': f'Bearer {line_notify_token}'}
             data = {'message': notification_message}

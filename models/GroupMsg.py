@@ -7,7 +7,7 @@ class GroupMsg:
         self.cursor = self.db.dbconnection()
         
     def getMessage(self, device_id):
-        self.cursor.execute('SELECT group_messages.message, message_sending_times.sending_time, message_sending_times.is_sent FROM group_messages INNER JOIN message_sending_times ON message_sending_times.id = group_messages.time_id WHERE message_sending_times.device_id = %s', (device_id,))
+        self.cursor.execute('SELECT group_messages.message,  message_sending_times.is_sent FROM group_messages INNER JOIN message_sending_times ON message_sending_times.id = group_messages.time_id WHERE message_sending_times.device_id = %s', (device_id,))
         data  = self.cursor.fetchall()
         return data
     
@@ -30,6 +30,8 @@ class GroupMsg:
         return sending_time
     
     def checkFlag(self, messages_data):
-        flag = [flag[2] for flag in messages_data][0]
+        print(messages_data)
+        input("wait")
+        flag = [flag[1] for flag in messages_data][0]
         return flag
       

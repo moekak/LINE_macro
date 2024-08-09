@@ -6,8 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from appium.options.android import UiAutomator2Options
 
 # from functions.Main import main_fn
-from functions.Main2 import main_fn
-from functions.Main2 import test
+from functions.Main import main_fn
+from functions.Main import test
 
 
 #Desired Capabilitiesの設定

@@ -2,7 +2,6 @@ from appium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from appium.options.android import UiAutomator2Options
 from functions.Main import main_fn
-from functions.Main import main_fn_test
 
 
 #Desired Capabilitiesの設定
@@ -25,4 +24,4 @@ wait = WebDriverWait(driver, 20)
 
 device_id = 2
 # main_fn(driver, wait, str(device_id))
-main_fn_test(driver, wait, str(device_id))
+main_fn(driver, wait, str(device_id))

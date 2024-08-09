@@ -2,7 +2,6 @@ from appium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from appium.options.android import UiAutomator2Options
 from functions.Main import main_fn
-from functions.Main import main_fn_test
 
 
 
