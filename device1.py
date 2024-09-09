@@ -22,9 +22,9 @@ driver = webdriver.Remote(command_executor=appium_server_url, options=capabiliti
 driver.update_settings({"enforceXPath1": True})
 
 
-wait = WebDriverWait(driver, 30)
+wait = WebDriverWait(driver, 5)
 
-device_id = 1
+device_id = 2
 # main_fn_test(driver, wait, str(device_id))
 main_fn(driver, wait, str(device_id))
 
