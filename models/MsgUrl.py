@@ -6,7 +6,6 @@ from models.Device import Device
 class MsgUrl: 
     def __init__(self):
         self.db = DBconnect()
-        self.cursor = None
         self.error_operation = ErrorOperation()
         self.notification_fn = Notification()
         self.device_model = Device()
@@ -16,7 +15,7 @@ class MsgUrl:
         self.db.close()  # デストラクタでデータベース接続を閉じる
         
             
-    def selectURL(self, device_id, driver):
+    def selectURL(self, device_id, driver, username):
                 
         try:
                 
@@ -29,7 +28,6 @@ class MsgUrl:
                 return None  # or some default value, e.g., 0 if no count is found
         
         except Exception as e:
-            username = self.device_model.selectUsername(device_id)
             self.notification_fn.send_error2(e, "URLの取得に失敗しました。再度スクリプトを実行します。", username)
             self.error_operation.restart_app(driver)
     

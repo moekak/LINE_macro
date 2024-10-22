@@ -5,7 +5,6 @@ class Device:
     def __init__(self):
         self.db = DBconnect()
         self.notification_fn = Notification()
-        self.cursor = None
         self.cursor = self.db.dbconnection()
 
     

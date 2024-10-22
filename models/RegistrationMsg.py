@@ -6,14 +6,13 @@ from models.Device import Device
 class RegistrationMsg: 
     def __init__(self):
         self.db = DBconnect()
-        self.cursor = None
         self.notification_fn = Notification()
         self.error_operation = ErrorOperation()
         self.device_model = Device()
         self.cursor = self.db.dbconnection()
         
         
-    def getMessage(self, device_id, driver):
+    def getMessage(self, device_id, driver, username):
         
         
             
@@ -23,7 +22,6 @@ class RegistrationMsg:
             return data
         
         except Exception as e:
-            username = self.device_model.selectUsername(device_id)
             self.notification_fn.send_error2(e, "URLの取得に失敗しました。再度スクリプトを実行します。", username)
             self.error_operation.restart_app(driver)
             

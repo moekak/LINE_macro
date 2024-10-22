@@ -1,5 +1,4 @@
 import requests
-from requests.exceptions import RequestException
 
 class LineNotify:
       def send_line_notify(self, notification_message):

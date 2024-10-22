@@ -8,7 +8,6 @@ class FriendCount:
     def __init__(self):
         self.db = DBconnect()
         self.notification_fn = Notification()
-        self.cursor = None
         self.device_model = Device()
         self.cursor = self.db.dbconnection()
         self.error_operation = ErrorOperation()
@@ -16,11 +15,11 @@ class FriendCount:
     def close(self):
         self.db.close()  # デストラクタでデータベース接続を閉じる
         
-    def updateCount(self, device_id, driver):
+    def updateCount(self, device_id, driver, username):
           
         try:
             today = datetime.date.today()
-            if self.hasFriendCount(device_id,today, driver) == False:
+            if self.hasFriendCount(device_id,today, driver, username) == False:
                 self.cursor.execute('INSERT INTO friend_counts (device_id, count) VALUES (%s, %s)', (device_id, 1))
                 self.db.conn.commit()  # 変更を永続化
             else:
@@ -28,27 +27,27 @@ class FriendCount:
                 self.db.conn.commit()  # 変更を永続化
             
         except Exception as e:
-            username = self.device_model.selectUsername(device_id)
             self.notification_fn.send_error2(e, "データベースの友達数更新に失敗しました、手動で更新してください。マクロは停止されています。", username)
             print(f"An error occurred: {e}")
             sys.exit()
             
-    def selectCount(self, device_id, driver):
+    def selectCount(self, device_id, driver, username):
              
         try:
             self.cursor.execute('SELECT SUM(count) total_count FROM friend_counts WHERE device_id = %s', (device_id,))
             count_tuple = self.cursor.fetchone()
             if count_tuple:
-                count = count_tuple[0]  # Extract the integer value from the tuple
-                return int(count)  # Return as an integer
+                count = count_tuple[0]  
+                return int(count) 
             else:
-                return None  # or some default value, e.g., 0 if no count is found
+                return None 
+        
         except Exception as e:
-            username = self.device_model.selectUsername(device_id)
+            self.notification_fn.send_error2(e, self.cursor, username)
             self.notification_fn.send_error2(e, "友達の数の取得に失敗しました。再度スクリプトを実行します。", username)
             self.error_operation.restart_app(driver)
 
-    def getDate(self, device_id, driver):
+    def getDate(self, device_id, driver, username):
         
         try:
             
@@ -70,14 +69,13 @@ class FriendCount:
        
             
         except Exception as e:
-            username = self.device_model.selectUsername(device_id)
             self.notification_fn.send_error2(e, "日付の取得に失敗しました。再度スクリプトを実行します。", username)
             self.error_operation.restart_app(driver)
             
 
-    def hasFriendCount(self, device_id, today, driver):
+    def hasFriendCount(self, device_id, today, driver, username):
         
-        date_list = self.getDate(device_id, driver)
+        date_list = self.getDate(device_id, driver, username)
 
         for date in date_list:
             if date == today:

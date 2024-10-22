@@ -6,7 +6,7 @@ class ErrorOperation():
     
         
     # ユーザーネーム変更ボタン(鉛筆マーク)の要素が見つからないエラーが出た場合
-    def restart_app(self,driver):
+    def restart_app(self,driver, notification_fn):
         try:
             notification_fn = Notification()
             # LINEアプリのパッケージ名とアクティビティ名を設定
@@ -25,7 +25,7 @@ class ErrorOperation():
             # スクリプトを再実行
             self.restart_script()
         except Exception as e:
-             self.notification_fn.send_error2(e, "スクリプトの再実行に失敗しました。", "")
+            notification_fn.send_error2(e, "スクリプトの再実行に失敗しました。", "")
         
     def restart_script(self):
         print("Restarting script...")
